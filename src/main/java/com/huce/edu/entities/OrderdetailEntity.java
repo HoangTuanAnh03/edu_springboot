@@ -1,12 +1,20 @@
 package com.huce.edu.entities;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor(staticName = "create")
 @Table(name = "ORDERDETAIL", schema = "dbo", catalog = "dbedu")
 public class OrderdetailEntity {
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
+    @Column(name = "ODID")
+    private Integer odid;
+    @Basic
     @Column(name = "OID")
     private Integer oid;
     @Basic
@@ -18,6 +26,14 @@ public class OrderdetailEntity {
     @Basic
     @Column(name = "PQUANTITY")
     private Integer pquantity;
+
+    public Integer getOdid() {
+        return odid;
+    }
+
+    public void setOdid(Integer odid) {
+        this.odid = odid;
+    }
 
     public Integer getOid() {
         return oid;
@@ -58,6 +74,7 @@ public class OrderdetailEntity {
 
         OrderdetailEntity that = (OrderdetailEntity) o;
 
+        if (odid != null ? !odid.equals(that.odid) : that.odid != null) return false;
         if (oid != null ? !oid.equals(that.oid) : that.oid != null) return false;
         if (pid != null ? !pid.equals(that.pid) : that.pid != null) return false;
         if (pprice != null ? !pprice.equals(that.pprice) : that.pprice != null) return false;
@@ -68,7 +85,8 @@ public class OrderdetailEntity {
 
     @Override
     public int hashCode() {
-        int result = oid != null ? oid.hashCode() : 0;
+        int result = odid != null ? odid.hashCode() : 0;
+        result = 31 * result + (oid != null ? oid.hashCode() : 0);
         result = 31 * result + (pid != null ? pid.hashCode() : 0);
         result = 31 * result + (pprice != null ? pprice.hashCode() : 0);
         result = 31 * result + (pquantity != null ? pquantity.hashCode() : 0);

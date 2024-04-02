@@ -1,10 +1,16 @@
 package com.huce.edu.entities;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
 @Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor(staticName = "create")
 @Table(name = "ORDERTABLE", schema = "dbo", catalog = "dbedu")
 public class OrdertableEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,6 +23,9 @@ public class OrdertableEntity {
     @Basic
     @Column(name = "ORDERDATE")
     private Date orderdate;
+    @Basic
+    @Column(name = "OADDRESS")
+    private String oaddress;
 
     public Integer getOid() {
         return oid;
@@ -36,6 +45,10 @@ public class OrdertableEntity {
 
     public Date getOrderdate() {
         return orderdate;
+    }
+
+    public void setOrderdate(java.sql.Date orderdate) {
+        this.orderdate = orderdate;
     }
 
     public void setOrderdate(Date orderdate) {
@@ -62,5 +75,13 @@ public class OrdertableEntity {
         result = 31 * result + (uid != null ? uid.hashCode() : 0);
         result = 31 * result + (orderdate != null ? orderdate.hashCode() : 0);
         return result;
+    }
+
+    public String getOaddress() {
+        return oaddress;
+    }
+
+    public void setOaddress(String oaddress) {
+        this.oaddress = oaddress;
     }
 }

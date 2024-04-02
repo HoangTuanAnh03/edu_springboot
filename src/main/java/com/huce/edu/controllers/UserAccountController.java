@@ -33,6 +33,7 @@ public class UserAccountController {
     private final OtpRepo otpRepo;
 
 
+    
     @PostMapping(path = "/register")
     public ResponseEntity<ApiResult<UserAccountDto>> registerCustomer(@Valid @RequestBody UserAccountDto userAccountDto) throws MessagingException, NoSuchAlgorithmException {
         RegisterEnum registerEnum = userAccountService.register(userAccountDto);

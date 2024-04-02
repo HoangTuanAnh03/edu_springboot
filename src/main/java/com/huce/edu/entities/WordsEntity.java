@@ -1,8 +1,14 @@
 package com.huce.edu.entities;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor(staticName = "create")
 @Table(name = "WORDS", schema = "dbo", catalog = "dbedu")
 public class WordsEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,6 +48,9 @@ public class WordsEntity {
     @Basic
     @Column(name = "TOPIC")
     private String topic;
+    @Basic
+    @Column(name = "TID")
+    private Integer tid;
 
     public Integer getWid() {
         return wid;
@@ -177,5 +186,13 @@ public class WordsEntity {
         result = 31 * result + (level != null ? level.hashCode() : 0);
         result = 31 * result + (topic != null ? topic.hashCode() : 0);
         return result;
+    }
+
+    public Integer getTid() {
+        return tid;
+    }
+
+    public void setTid(Integer tid) {
+        this.tid = tid;
     }
 }

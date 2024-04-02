@@ -1,8 +1,14 @@
 package com.huce.edu.entities;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor(staticName = "create")
 @Table(name = "PRODUCT", schema = "dbo", catalog = "dbedu")
 public class ProductEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)

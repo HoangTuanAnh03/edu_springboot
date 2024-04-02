@@ -54,6 +54,10 @@ public class VerificationcodeEntity {
         return exp;
     }
 
+    public void setExp(java.sql.Date exp) {
+        this.exp = exp;
+    }
+
     public void setExp(Date exp) {
         this.exp = exp;
     }
