@@ -11,14 +11,21 @@ public class BearerTokenUtil {
         String authHeader = request.getHeader("Authorization");
         String token = null;
         String username = null;
-
+        if(authHeader == null || authHeader.length() < 7){
+            return null;
+        }
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             token = authHeader.substring(7);
 
             Base64.Decoder decoder = Base64.getUrlDecoder();
             String[] chunks = token.split("\\.");
-            String payload = new String(decoder.decode(chunks[1]));
+            String payload;
+            try{
+                payload = new String(decoder.decode(chunks[1]));
+            }catch (Exception ex){
+                return null;
+            }
             JsonObject jsonObject = new JsonParser().parse(payload).getAsJsonObject();
 
             username = jsonObject.get("sub").getAsString();

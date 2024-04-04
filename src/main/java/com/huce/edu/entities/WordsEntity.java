@@ -43,12 +43,6 @@ public class WordsEntity {
     @Column(name = "VIEDESC")
     private String viedesc;
     @Basic
-    @Column(name = "LEVEL")
-    private String level;
-    @Basic
-    @Column(name = "TOPIC")
-    private String topic;
-    @Basic
     @Column(name = "TID")
     private Integer tid;
 
@@ -132,21 +126,6 @@ public class WordsEntity {
         this.viedesc = viedesc;
     }
 
-    public String getLevel() {
-        return level;
-    }
-
-    public void setLevel(String level) {
-        this.level = level;
-    }
-
-    public String getTopic() {
-        return topic;
-    }
-
-    public void setTopic(String topic) {
-        this.topic = topic;
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -165,8 +144,6 @@ public class WordsEntity {
         if (meaning != null ? !meaning.equals(that.meaning) : that.meaning != null) return false;
         if (endesc != null ? !endesc.equals(that.endesc) : that.endesc != null) return false;
         if (viedesc != null ? !viedesc.equals(that.viedesc) : that.viedesc != null) return false;
-        if (level != null ? !level.equals(that.level) : that.level != null) return false;
-        if (topic != null ? !topic.equals(that.topic) : that.topic != null) return false;
 
         return true;
     }
@@ -183,8 +160,7 @@ public class WordsEntity {
         result = 31 * result + (meaning != null ? meaning.hashCode() : 0);
         result = 31 * result + (endesc != null ? endesc.hashCode() : 0);
         result = 31 * result + (viedesc != null ? viedesc.hashCode() : 0);
-        result = 31 * result + (level != null ? level.hashCode() : 0);
-        result = 31 * result + (topic != null ? topic.hashCode() : 0);
+
         return result;
     }
 

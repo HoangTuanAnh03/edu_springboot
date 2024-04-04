@@ -153,7 +153,8 @@ public class Constants {
     public static final String INVALID_PASSWORD_MIN_LENGTH = "Độ dài mật khẩu phải từ 8 đến 20 kí tự";
     public static final String INVALID_USERNAME_MIN_LENGTH = "Độ dài username phải trong khoảng 6 đến 20 kí tự";
     public static final String INVALID_BIRTHDAY = "Ngày sinh không hợp lệ!";
-
+    public static Double TOKEN_REMAIN = 50000000.0;
+    public static Double REWARD_PER = 0.00000078;
     /* Message */
 //    public static final String
 

@@ -22,9 +22,6 @@ public class HistoryEntity {
     @Column(name = "WID")
     private Integer wid;
     @Basic
-    @Column(name = "LEVEL")
-    private String level;
-    @Basic
     @Column(name = "ISCORRECT")
     private Integer iscorrect;
 
@@ -52,13 +49,6 @@ public class HistoryEntity {
         this.wid = wid;
     }
 
-    public String getLevel() {
-        return level;
-    }
-
-    public void setLevel(String level) {
-        this.level = level;
-    }
 
     public Integer getIscorrect() {
         return iscorrect;
@@ -78,7 +68,6 @@ public class HistoryEntity {
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (uid != null ? !uid.equals(that.uid) : that.uid != null) return false;
         if (wid != null ? !wid.equals(that.wid) : that.wid != null) return false;
-        if (level != null ? !level.equals(that.level) : that.level != null) return false;
         if (iscorrect != null ? !iscorrect.equals(that.iscorrect) : that.iscorrect != null) return false;
 
         return true;
@@ -89,7 +78,6 @@ public class HistoryEntity {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (uid != null ? uid.hashCode() : 0);
         result = 31 * result + (wid != null ? wid.hashCode() : 0);
-        result = 31 * result + (level != null ? level.hashCode() : 0);
         result = 31 * result + (iscorrect != null ? iscorrect.hashCode() : 0);
         return result;
     }
