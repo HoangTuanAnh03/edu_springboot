@@ -1,6 +1,6 @@
 package com.huce.edu.security;
 
-import com.huce.edu.entities.UsersEntity;
+import com.huce.edu.entities.UserEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -13,7 +13,7 @@ public class UserInfoUserDetails implements UserDetails {
     private final String password;
     private final List<GrantedAuthority> authorities;
 
-    public UserInfoUserDetails(UsersEntity user) {
+    public UserInfoUserDetails(UserEntity user) {
         this.username = user.getEmail();
         this.password = user.getPassword();
         this.authorities = null;

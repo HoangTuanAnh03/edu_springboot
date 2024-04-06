@@ -2,7 +2,7 @@ package com.huce.edu.controllers;
 
 
 import com.huce.edu.entities.OtpEntity;
-import com.huce.edu.entities.UsersEntity;
+import com.huce.edu.entities.UserEntity;
 import com.huce.edu.enums.RegisterEnum;
 import com.huce.edu.enums.VerificationEnum;
 import com.huce.edu.models.ApiResult;
@@ -23,7 +23,7 @@ import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
 
 @RestController
-@RequestMapping(path = "/users")
+@RequestMapping(path = "/api/users")
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 public class UserAccountController {
@@ -50,7 +50,7 @@ public class UserAccountController {
     @PostMapping(path = "/forgetPassword")
     public ResponseEntity<ApiResult<?>> forgetPassword(@Valid @RequestParam(name = "email") String email) {
         ApiResult<?> result;
-        UsersEntity user = userAccountRepo.findFirstByEmail(email);
+        UserEntity user = userAccountRepo.findFirstByEmail(email);
         if (user != null) {
             /* Kiểm tra xem Otp có bị giới hạn gửi lại không */
             OtpEntity otp = otpRepo.findFirstByUid(user.getUid());

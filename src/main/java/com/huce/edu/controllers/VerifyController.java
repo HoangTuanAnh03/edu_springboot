@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
-@RequestMapping(path = "/users")
+@RequestMapping(path = "/api/users")
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 public class VerifyController {

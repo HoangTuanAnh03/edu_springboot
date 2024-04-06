@@ -1,7 +1,9 @@
 package com.huce.edu.security;
 
+import com.huce.edu.advice.exceptions.NotFoundException;
 import com.huce.edu.shareds.Constants;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;

@@ -1,7 +1,7 @@
 package com.huce.edu.controllers;
 
 import com.huce.edu.entities.KeytokenEntity;
-import com.huce.edu.entities.UsersEntity;
+import com.huce.edu.entities.UserEntity;
 import com.huce.edu.models.ApiResult;
 import com.huce.edu.models.dto.AuthRequest;
 import com.huce.edu.models.dto.UserInfo;
@@ -29,6 +29,7 @@ import java.util.Base64;
 
 @CrossOrigin(origins = "*")
 @RestController
+@RequestMapping(path = "/api/users")
 @RequiredArgsConstructor
 public class AuthController {
 
@@ -51,7 +52,7 @@ public class AuthController {
         String username = jsonObject.get("sub").getAsString();
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-        UsersEntity user = userAccountRepo.findFirstByEmail(username);
+        UserEntity user = userAccountRepo.findFirstByEmail(username);
         KeytokenEntity keyByUser = keyRepo.findFirstByUid(user.getUid());
         try {
             if (jwtService.validateToken(token, keyByUser.getPrivatekey(), userDetails)) {
@@ -83,7 +84,7 @@ public class AuthController {
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword()));
 
             if (authentication.isAuthenticated()) {
-                UsersEntity user = userAccountRepo.findFirstByEmail(authRequest.getEmail());
+                UserEntity user = userAccountRepo.findFirstByEmail(authRequest.getEmail());
                 if (user != null && user.getStatus() == 1) {
                     String privateKey = GenerateKeyUtil.generate();
                     String publicKey = GenerateKeyUtil.generate();
@@ -144,7 +145,7 @@ public class AuthController {
 
         if (username != null) {
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-            UsersEntity user = userAccountRepo.findFirstByEmail(username);
+            UserEntity user = userAccountRepo.findFirstByEmail(username);
             KeytokenEntity keyByUser = keyRepo.findFirstByUid(user.getUid());
             if (jwtService.validateToken(token, keyByUser.getPublickey(), userDetails)) {
                 keyRepo.delete(keyByUser);

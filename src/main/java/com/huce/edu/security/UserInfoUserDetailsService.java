@@ -1,6 +1,6 @@
 package com.huce.edu.security;
 
-import com.huce.edu.entities.UsersEntity;
+import com.huce.edu.entities.UserEntity;
 import com.huce.edu.repositories.UserAccountRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,7 +19,7 @@ public class UserInfoUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Optional<UsersEntity> user = userAccountRepo.findByEmail(email);
+        Optional<UserEntity> user = userAccountRepo.findByEmail(email);
 
         return user.map(UserInfoUserDetails::new)
                 .orElseThrow(()-> new UsernameNotFoundException("User not found " + email));

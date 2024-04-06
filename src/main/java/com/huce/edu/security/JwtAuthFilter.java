@@ -1,7 +1,7 @@
 package com.huce.edu.security;
 
 import com.huce.edu.entities.KeytokenEntity;
-import com.huce.edu.entities.UsersEntity;
+import com.huce.edu.entities.UserEntity;
 import com.huce.edu.repositories.KeyRepo;
 import com.huce.edu.repositories.UserAccountRepo;
 import com.huce.edu.utils.BearerTokenUtil;
@@ -36,7 +36,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-            UsersEntity user = userAccountRepo.findFirstByEmail(username);
+            UserEntity user = userAccountRepo.findFirstByEmail(username);
             KeytokenEntity keyByUser = keyRepo.findFirstByUid(user.getUid());
             if (jwtService.validateToken(token, keyByUser.getPublickey(), userDetails) ) {
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());

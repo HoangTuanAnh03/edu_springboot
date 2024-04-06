@@ -1,7 +1,5 @@
 package com.huce.edu.models.dto;
 
-import jakarta.persistence.Basic;
-import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ExtendedTopicDto {
+public class TopicByLevel {
 	private Integer tid;
 	private String topic;
 	private Integer lid;

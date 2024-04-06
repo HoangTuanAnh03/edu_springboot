@@ -1,17 +1,17 @@
 package com.huce.edu.repositories;
 
-import com.huce.edu.entities.UsersEntity;
+import com.huce.edu.entities.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 @Repository
-public interface UserAccountRepo extends JpaRepository<UsersEntity, Integer> {
+public interface UserAccountRepo extends JpaRepository<UserEntity, Integer> {
     boolean existsByEmail(String email);
-    UsersEntity findFirstByUid(int id);
-    UsersEntity findFirstByEmail(String email);
+    UserEntity findFirstByUid(int id);
+    UserEntity findFirstByEmail(String email);
 
-    Optional<UsersEntity> findByEmail(String email);
+    Optional<UserEntity> findByEmail(String email);
 
 }

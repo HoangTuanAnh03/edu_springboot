@@ -1,7 +1,7 @@
 package com.huce.edu.services;
 
 import com.huce.edu.entities.OtpEntity;
-import com.huce.edu.entities.UsersEntity;
+import com.huce.edu.entities.UserEntity;
 import com.huce.edu.entities.VerificationcodeEntity;
 import com.huce.edu.enums.RegisterEnum;
 import com.huce.edu.enums.VerificationEnum;
@@ -17,7 +17,7 @@ import java.security.NoSuchAlgorithmException;
 @Service
 @Transactional
 public interface UserAccountService {
-    void save(UsersEntity UsersEntity);
+    void save(UserEntity UserEntity);
 
     void edit (UpdateUserAccountDto updateUserAccountDto);
 

@@ -1,7 +1,7 @@
 package com.huce.edu.services.Impls;
 
 
-import com.huce.edu.entities.UsersEntity;
+import com.huce.edu.entities.UserEntity;
 import com.huce.edu.models.dto.DataMailDto;
 import com.huce.edu.repositories.UserAccountRepo;
 import com.huce.edu.services.MailService;
@@ -13,9 +13,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
-import java.text.MessageFormat;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Component
@@ -37,7 +35,7 @@ public class SendMailServiceImpl implements SendMailService {
 
     @Override
     @Async
-    public void forgetPasswordUser(UsersEntity user, String otp) {
+    public void forgetPasswordUser(UserEntity user, String otp) {
         try {
             DataMailDto dataMail = new DataMailDto();
 
@@ -58,7 +56,7 @@ public class SendMailServiceImpl implements SendMailService {
 
     @Override
     @Async
-    public void registerUser(UsersEntity user, String verificationCode) {
+    public void registerUser(UserEntity user, String verificationCode) {
         try {
             DataMailDto dataMail = new DataMailDto();
 

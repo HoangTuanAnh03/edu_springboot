@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor(staticName = "create")
 @Table(name = "TOPICS", schema = "dbo", catalog = "dbedu")
-public class TopicsEntity {
+public class TopicEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "TID")
@@ -51,7 +51,7 @@ public class TopicsEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        TopicsEntity that = (TopicsEntity) o;
+        TopicEntity that = (TopicEntity) o;
 
         if (tid != null ? !tid.equals(that.tid) : that.tid != null) return false;
         if (topic != null ? !topic.equals(that.topic) : that.topic != null) return false;

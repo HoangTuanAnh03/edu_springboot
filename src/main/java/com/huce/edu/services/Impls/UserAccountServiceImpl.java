@@ -2,7 +2,7 @@ package com.huce.edu.services.Impls;
 
 import com.huce.edu.entities.KeytokenEntity;
 import com.huce.edu.entities.OtpEntity;
-import com.huce.edu.entities.UsersEntity;
+import com.huce.edu.entities.UserEntity;
 import com.huce.edu.entities.VerificationcodeEntity;
 import com.huce.edu.enums.RegisterEnum;
 import com.huce.edu.enums.VerificationEnum;
@@ -43,12 +43,12 @@ public class UserAccountServiceImpl implements UserAccountService {
     private final SendMailService sendMailService;
     private final PasswordEncoder passwordEncoder;
 
-    private UsersEntity createUser(UserAccountDto newUser) {
-        return UsersEntity.create(0, newUser.getEmail(), newUser.getName(), passwordEncoder.encode(newUser.getPassword()), 0.0, 0);
+    private UserEntity createUser(UserAccountDto newUser) {
+        return UserEntity.create(0, newUser.getEmail(), newUser.getName(), passwordEncoder.encode(newUser.getPassword()), 0.0, 0);
     }
 
     @Override
-    public void save(UsersEntity UsersEntity) {
+    public void save(UserEntity UserEntity) {
 
     }
 
@@ -145,7 +145,7 @@ public class UserAccountServiceImpl implements UserAccountService {
         /* Kiểm tra xem email đã có người dùng chưa */
         /* 2.1 Email đã tồn tại */
         if (userRepository.existsByEmail(newUser.getEmail())) {
-            UsersEntity userByEmail = userRepository.findFirstByEmail(newUser.getEmail());
+            UserEntity userByEmail = userRepository.findFirstByEmail(newUser.getEmail());
             /*Kiểm tra xem email đó đã được kích hoạt chưa */
             /* 2.1.1. Email chưa được kích hoạt */
             if (userByEmail.getStatus() == 0) {
@@ -153,16 +153,16 @@ public class UserAccountServiceImpl implements UserAccountService {
 
                 /* Tạo mới user và xóa đối tượng có email trùng */
                 // Tạo user +  gửi mail + save
-                UsersEntity UsersEntity = createUser(newUser);
-                sendMailService.registerUser(UsersEntity, code);
-                userRepository.save(UsersEntity);
+                UserEntity UserEntity = createUser(newUser);
+                sendMailService.registerUser(UserEntity, code);
+                userRepository.save(UserEntity);
                 // xóa 1 đối tượng cũ
                 verificationCodeRepo.deleteById(userByEmail.getUid());
                 keyRepo.deleteById(userByEmail.getUid());
                 userRepository.delete(userByEmail);
 
                 // Lấy idUser vừa thêm
-                UsersEntity currentUser = userRepository.findFirstByEmail(newUser.getEmail());
+                UserEntity currentUser = userRepository.findFirstByEmail(newUser.getEmail());
 
                 /* Tạo VerificationCode và kiểm tra xem có email đó chưa*/
                 VerificationcodeEntity codeByEmail = verificationCodeRepo.findFirstByEmail(newUser.getEmail());
@@ -199,12 +199,12 @@ public class UserAccountServiceImpl implements UserAccountService {
 
             /* Tạo user mới hoàn toàn */
             // Tạo user +  gửi mail + save
-            UsersEntity UsersEntity = createUser(newUser);
-            sendMailService.registerUser(UsersEntity, code);
-            userRepository.save(UsersEntity);
+            UserEntity UserEntity = createUser(newUser);
+            sendMailService.registerUser(UserEntity, code);
+            userRepository.save(UserEntity);
 
             // Lấy idUser vừa thêm
-            UsersEntity currentUser = userRepository.findFirstByEmail(newUser.getEmail());
+            UserEntity currentUser = userRepository.findFirstByEmail(newUser.getEmail());
 
             /* Tạo VerificationCode và kiểm tra xem có email đó chưa*/
             VerificationcodeEntity codeByEmail = verificationCodeRepo.findFirstByEmail(newUser.getEmail());
@@ -218,7 +218,7 @@ public class UserAccountServiceImpl implements UserAccountService {
             verificationCodeRepo.save(verificationCode);
 
             /* Tạo mới key */
-            KeytokenEntity newKey = KeytokenEntity.create(currentUser.getUid(), privateKey, publicKey, jwtService.generateRefreshToken(UsersEntity.getEmail(), privateKey));
+            KeytokenEntity newKey = KeytokenEntity.create(currentUser.getUid(), privateKey, publicKey, jwtService.generateRefreshToken(UserEntity.getEmail(), privateKey));
             keyRepo.save(newKey);
 
             return RegisterEnum.SUCCESS;
@@ -233,7 +233,7 @@ public class UserAccountServiceImpl implements UserAccountService {
         if (userCode == null || !Objects.equals(userCode.getCode(), code)) return VerificationEnum.FAILED;
         if (isTimeOutRequired(userCode, Constants.VERIFICATION_CODE_DURATION)) return VerificationEnum.TIME_OUT;
 
-        UsersEntity userByEmail = userRepository.findFirstByEmail(userCode.getEmail());
+        UserEntity userByEmail = userRepository.findFirstByEmail(userCode.getEmail());
         if (userByEmail.getStatus() == 1) return VerificationEnum.FAILED;
         userByEmail.setStatus(1);
         userRepository.save(userByEmail);
@@ -245,7 +245,7 @@ public class UserAccountServiceImpl implements UserAccountService {
     @Override
     public void forgetPassword(int userId) {
 
-        UsersEntity user = userRepository.findFirstByUid(userId);
+        UserEntity user = userRepository.findFirstByUid(userId);
         OtpEntity otp = otpRepo.findFirstByUid(userId);
         String newOtp = GenerateOtpUtil.create(6);
 
@@ -264,7 +264,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 
     @Override
     public VerificationEnum checkOtp(ResetPasswordDto resetPasswordDto) {
-        UsersEntity userByEmail = userRepository.findFirstByEmail(resetPasswordDto.getEmail());
+        UserEntity userByEmail = userRepository.findFirstByEmail(resetPasswordDto.getEmail());
         if (userByEmail == null) return VerificationEnum.NOT_FOUND;
 
         OtpEntity otpByUserId = otpRepo.findFirstByUid(userByEmail.getUid());

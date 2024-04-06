@@ -47,20 +47,18 @@ public class SecurityConfig {
 //                        .permitAll()
 //                )
                 .authorizeHttpRequests((authorize) -> authorize
-//                                .requestMatchers("/test").authenticated()
-//                                .requestMatchers("/person/search").permitAll()
-//                                .requestMatchers("/person/**").authenticated()
-////                                .requestMatchers("/sign-out").authenticated()
-//                                .requestMatchers("/familyTree/**").authenticated()
-//                                .requestMatchers("/notification/**").authenticated()
-
-
-//                                .requestMatchers("/familytree-api-docs",
-//                                        "/familytree-documentation",
+//                                .requestMatchers("/edu-api-docs/**",
+//                                        "/edu-documentation/**",
 //                                        "/swagger-ui/**").permitAll()
-//                                .requestMatchers("/sign-in",
-//                                "/users/forgetPassword/**",
-//                                "/users/register/**").permitAll()
+
+                                .requestMatchers("/api/users/sign-out").authenticated()
+
+                                .requestMatchers("/api/words/getScrambleWord").permitAll()
+                                .requestMatchers("/api/words/**" ).authenticated()
+                                .requestMatchers("/api/coin/**" ).authenticated()
+
+
+
                                 .anyRequest().permitAll()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

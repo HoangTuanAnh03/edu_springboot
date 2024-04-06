@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor(staticName = "create")
 @Table(name = "USERS", schema = "dbo", catalog = "dbedu")
-public class UsersEntity {
+public class UserEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "UID")
@@ -84,7 +84,7 @@ public class UsersEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        UsersEntity that = (UsersEntity) o;
+        UserEntity that = (UserEntity) o;
 
         if (uid != null ? !uid.equals(that.uid) : that.uid != null) return false;
         if (email != null ? !email.equals(that.email) : that.email != null) return false;
