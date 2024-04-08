@@ -42,21 +42,27 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .formLogin(Customizer.withDefaults())
-//                .formLogin(form -> form
-//                        .loginPage("/login")
-//                        .permitAll()
-//                )
+                .formLogin(form -> form
+                        .loginPage("/login")
+                        .permitAll()
+                )
                 .authorizeHttpRequests((authorize) -> authorize
 //                                .requestMatchers("/edu-api-docs/**",
 //                                        "/edu-documentation/**",
 //                                        "/swagger-ui/**").permitAll()
-
-                                .requestMatchers("/api/users/sign-out").authenticated()
+                                .requestMatchers("/api/admin/sign-in",
+                                        "/api/admin/verifyRefreshToken").permitAll()
+                                .requestMatchers("/api/admin/add").hasAuthority("SUPER_ADMIN")
+                                .requestMatchers("/api/admin/**").hasAnyAuthority("SUPER_ADMIN", "ADMIN")
 
                                 .requestMatchers("/api/words/getScrambleWord").permitAll()
                                 .requestMatchers("/api/words/**" ).authenticated()
-                                .requestMatchers("/api/coin/**" ).authenticated()
 
+                                .requestMatchers("/api/coin/**").authenticated()
+                                .requestMatchers("/api/order/**").authenticated()
+
+                                .requestMatchers("/api/product/getAll").permitAll()
+                                .requestMatchers("/api/product/**").hasAnyAuthority("SUPER_ADMIN", "ADMIN")
 
 
                                 .anyRequest().permitAll()

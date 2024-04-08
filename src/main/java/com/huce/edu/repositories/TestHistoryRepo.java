@@ -1,6 +1,5 @@
 package com.huce.edu.repositories;
 
-import com.huce.edu.entities.OrderdetailEntity;
 import com.huce.edu.entities.TesthistoryEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

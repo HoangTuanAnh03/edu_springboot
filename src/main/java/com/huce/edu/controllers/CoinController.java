@@ -8,6 +8,7 @@ import com.huce.edu.repositories.HistoryRepo;
 import com.huce.edu.repositories.UserAccountRepo;
 import com.huce.edu.repositories.WordRepo;
 import com.huce.edu.services.HistoryService;
+import com.huce.edu.shareds.Constants;
 import com.huce.edu.utils.BearerTokenUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -17,8 +18,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.huce.edu.shareds.Constants.REWARD_PER;
-import static com.huce.edu.shareds.Constants.TOKEN_REMAIN;
 
 @CrossOrigin("*")
 @RestController
@@ -33,23 +32,30 @@ public class CoinController {
 
     /* Sau code sửa sau */
     @GetMapping("/post")
-    public ResponseEntity<ApiResult<Double>> sendAnswer(HttpServletRequest request, @RequestParam(defaultValue = "") String answer, @RequestParam(defaultValue = "1") int wid) {
-        ApiResult<Double> result;
+    public ResponseEntity<ApiResult<?>> sendAnswer(HttpServletRequest request, @RequestParam String answer, @RequestParam int wid) {
+        ApiResult<?> result;
 
         String email = BearerTokenUtil.getUserName(request);
         UserEntity user = userAccountRepo.findFirstByEmail(email);
         List<HistoryEntity> historyEntityList = historyRepo.findByUid(user.getUid());
-        if (historyEntityList.stream().filter(t -> t.getWid() == wid).count() != 0) {
-            result = ApiResult.create(HttpStatus.OK, "Câu này đã trả lời trước đây", 0.0);
+        if (!wordRepo.existsByWid(wid)) {
+            result = ApiResult.create(HttpStatus.BAD_REQUEST, "Câu hỏi không tồn tại!", 0);
+            return ResponseEntity.ok(result);
+        }
+
+        if (historyEntityList.stream().anyMatch(t -> t.getWid() == wid)) {
+            result = ApiResult.create(HttpStatus.OK, "Câu này đã trả lời trước đây", 0);
+            return ResponseEntity.ok(result);
+        }
+
+        if (wordRepo.findByWid(wid).getWord().equalsIgnoreCase(answer)) {
+            user.setCoin(user.getCoin()+Constants.ANSWER_BONUS_AMOUNT);
+            userAccountRepo.save(user);
+            historyService.create(HistoryDto.create(user.getUid(), wid, 1));
+            result = ApiResult.create(HttpStatus.OK, "Nhận được xu", Constants.ANSWER_BONUS_AMOUNT);
         } else {
-            if (wordRepo.findByWid(wid).getWord().toLowerCase().equals(answer.toLowerCase())) {
-                result = ApiResult.create(HttpStatus.OK, "Nhận được xu", TOKEN_REMAIN * REWARD_PER);
-                TOKEN_REMAIN = TOKEN_REMAIN - TOKEN_REMAIN * REWARD_PER;
-                historyService.create(HistoryDto.create(user.getUid(), wid, 1));
-            } else {
-                result = ApiResult.create(HttpStatus.OK, "Bạn đã trả lời sai", 0.0);
-                historyService.create(HistoryDto.create(user.getUid(), wid, 0));
-            }
+            historyService.create(HistoryDto.create(user.getUid(), wid, 0));
+            result = ApiResult.create(HttpStatus.OK, "Bạn đã trả lời sai", 0);
         }
         return ResponseEntity.ok(result);
     }

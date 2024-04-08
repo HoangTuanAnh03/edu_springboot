@@ -1,11 +1,15 @@
 package com.huce.edu.security;
 
+import com.huce.edu.entities.AdminsEntity;
 import com.huce.edu.entities.UserEntity;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class UserInfoUserDetails implements UserDetails {
 
@@ -20,6 +24,14 @@ public class UserInfoUserDetails implements UserDetails {
 //        this.authorities = Arrays.stream(user.getRoles().split(","))
 //                .map(SimpleGrantedAuthority::new)
 //                .collect(Collectors.toList());
+    }
+
+    public UserInfoUserDetails(AdminsEntity admin) {
+        this.username = admin.getEmail();
+        this.password = admin.getPassword();
+        this.authorities = Arrays.stream(admin.getRole().split(","))
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
     }
 
 

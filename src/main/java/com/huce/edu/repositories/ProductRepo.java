@@ -7,8 +7,8 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ProductRepo extends JpaRepository<ProductEntity, Integer> {
-    ProductEntity findByPid(Integer pid);
-    ProductEntity findByPname(String name);
-
+    ProductEntity findFirstByPid(Integer pid);
+    ProductEntity findFirstByName(String name);
+    boolean existsByName(String name);
 }
 

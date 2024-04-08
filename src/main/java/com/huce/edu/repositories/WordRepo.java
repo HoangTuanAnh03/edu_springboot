@@ -11,6 +11,8 @@ public interface WordRepo extends JpaRepository<WordEntity, Integer> {
     WordEntity findByWid(Integer wid);
     WordEntity findFirstByWid(Integer wid);
 
+    boolean existsByWid(Integer wid);
+
     List<WordEntity> findByWord(String word);
     List<WordEntity> findByTid(Integer tid);
 }

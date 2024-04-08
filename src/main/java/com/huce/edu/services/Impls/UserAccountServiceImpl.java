@@ -183,7 +183,7 @@ public class UserAccountServiceImpl implements UserAccountService {
                     keyRepo.delete(keyByUserId);
                 }
 
-                KeytokenEntity newKey = KeytokenEntity.create(currentUser.getUid(), privateKey, publicKey, jwtService.generateRefreshToken(userByEmail.getEmail(), privateKey));
+                KeytokenEntity newKey = KeytokenEntity.create(0, currentUser.getUid(), null, privateKey, publicKey, jwtService.generateRefreshToken(userByEmail.getEmail(), privateKey));
                 keyRepo.save(newKey);
 
                 return RegisterEnum.SUCCESS;
@@ -218,7 +218,7 @@ public class UserAccountServiceImpl implements UserAccountService {
             verificationCodeRepo.save(verificationCode);
 
             /* Tạo mới key */
-            KeytokenEntity newKey = KeytokenEntity.create(currentUser.getUid(), privateKey, publicKey, jwtService.generateRefreshToken(UserEntity.getEmail(), privateKey));
+            KeytokenEntity newKey = KeytokenEntity.create(0, currentUser.getUid(), null, privateKey, publicKey, jwtService.generateRefreshToken(UserEntity.getEmail(), privateKey));
             keyRepo.save(newKey);
 
             return RegisterEnum.SUCCESS;

@@ -77,6 +77,8 @@ public class Constants {
     public static final String INVALID_BIRTHDAY = "Ngày sinh không hợp lệ!";
     public static Double TOKEN_REMAIN = 50000000.0;
     public static Double REWARD_PER = 0.00000078;
+    public static final int ANSWER_BONUS_AMOUNT = 10;
+
     /* Message */
 //    public static final String
 

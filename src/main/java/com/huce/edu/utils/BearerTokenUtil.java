@@ -18,15 +18,32 @@ public class BearerTokenUtil {
             Base64.Decoder decoder = Base64.getUrlDecoder();
             String[] chunks = token.split("\\.");
             String payload;
-            try{
+            try {
                 payload = new String(decoder.decode(chunks[1]));
-            }catch (Exception ex){
+            } catch (Exception ex) {
                 return null;
             }
             JsonObject jsonObject = new JsonParser().parse(payload).getAsJsonObject();
 
             username = jsonObject.get("sub").getAsString();
         }
+        return username;
+    }
+
+    public static String getUserName(String token) {
+        String username = null;
+
+        Base64.Decoder decoder = Base64.getUrlDecoder();
+        String[] chunks = token.split("\\.");
+        String payload;
+        try {
+            payload = new String(decoder.decode(chunks[1]));
+        } catch (Exception ex) {
+            return null;
+        }
+        JsonObject jsonObject = new JsonParser().parse(payload).getAsJsonObject();
+
+        username = jsonObject.get("sub").getAsString();
         return username;
     }
 
