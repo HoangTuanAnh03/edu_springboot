@@ -28,7 +28,6 @@ import java.util.List;
 public class LevelController {
     private final UserAccountRepo userAccountRepo;
     private final LevelService levelService;
-
     @GetMapping("/getAll")
     public ResponseEntity<ApiResult<ArrayList<LevelDto>>> getAllLevels(HttpServletRequest request) {
          String email = BearerTokenUtil.getUserName(request);
