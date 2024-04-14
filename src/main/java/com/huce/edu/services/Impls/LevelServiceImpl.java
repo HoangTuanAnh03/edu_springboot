@@ -30,26 +30,23 @@ public class LevelServiceImpl implements LevelService {
         LevelEntity level = levelRepo.findByLid(lid);
         ArrayList<TopicEntity> listTopic = new ArrayList<>(topicRepo.findByLid(lid));
         ArrayList<TopicByLevel> listTopicDto = new ArrayList<>();
-        int numWord = 0;
-        int totalProcessLevel = 0;
-        for (TopicEntity t : listTopic) {
-            numWord += wordRepo.findByTid(t.getTid()).size();
-            if (user == null) {
-                listTopicDto.add(new TopicByLevel(t.getTid(), t.getTopic(), t.getLid(), 0));
-            } else {
-                List<HistoryEntity> h = historyRepo.findByUid(user.getUid());
-                List<HistoryEntity> historyByTid = h.stream().filter(row -> wordRepo.findFirstByWid(row.getWid()).getTid().equals(t.getTid())).toList();
-                Set<Integer> seenWid = new HashSet<>();
-                for (HistoryEntity historyEntity : historyByTid) {
-                    seenWid.add(historyEntity.getWid());
-                }
-                int process = (int) (seenWid.size() * 100) / (wordRepo.findByTid(t.getTid()).size());
-                totalProcessLevel += process;
-                listTopicDto.add(new TopicByLevel(t.getTid(), t.getTopic(), t.getLid(), process));
-            }
+        int uid = 0;
+        if (user != null) {
+            uid = user.getUid();
         }
-        LevelDto levelDto = new LevelDto(level.getLid(), level.getLevel(), listTopic.size(), numWord, (int) totalProcessLevel/listTopic.size());
-
+        int numCorrects = 0;
+        int numWord = 0; // tổng số từ
+        for (TopicEntity topic : listTopic) {
+            int tid = topic.getTid();
+            List<Integer> wids = wordRepo.findByTid(tid).stream().map(WordEntity::getWid).toList();
+            int numWordsByTopic = wids.size();
+            int numCorrectAns = historyRepo.findByUidAndIscorrectAndWidIn(uid, 1, wids).size();
+            numWord+=numWordsByTopic;
+            numCorrects+=numCorrectAns;
+            listTopicDto.add(new TopicByLevel(tid, topic.getTopic(), topic.getLid(), numWordsByTopic!=0?(int)numCorrectAns*100/numWordsByTopic:0));
+        }
+        int totalProcessLevel = numWord != 0?(int)numCorrects*100/numWord : 0; // số từ đúng / tổng số từ
+        LevelDto levelDto = new LevelDto(level.getLid(), level.getLevel(), listTopic.size(), numWord, totalProcessLevel);
         return new ListTopicByLevel(levelDto, listTopicDto);
     }
 
@@ -66,9 +63,10 @@ public class LevelServiceImpl implements LevelService {
 		for (LevelEntity levelEntity : listLevelsEntities) {
             List<TopicEntity> listTopicsByLid = topicRepo.findByLid(levelEntity.getLid());
             int numTopic = listTopicsByLid.size();
-            List<WordId> words = wordRepo.findByTidIn(listTopicsByLid.stream().map(TopicEntity::getTid).toList());
+            List<Integer> words = new ArrayList<>(wordRepo.getByTidIn(listTopicsByLid.stream().map(TopicEntity::getTid).toList())).stream().map(WordId::getWid).toList();
             long numCorrects = historyRepo.findByUid(uid).stream().filter(t -> t.getIscorrect() == 1 && words.contains(t.getWid())).count();
-            listLevelDto.add(new LevelDto(levelEntity.getLid(), levelEntity.getLevel(), numTopic, words.size(), (int) (numCorrects / words.size())));
+            listLevelDto.add(new LevelDto(levelEntity.getLid(), levelEntity.getLevel(), numTopic, words.size(), (int) (numCorrects*100 / words.size())));
+
         }
         return listLevelDto;
     }
