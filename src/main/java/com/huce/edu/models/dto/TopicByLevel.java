@@ -11,5 +11,5 @@ public class TopicByLevel {
 	private Integer tid;
 	private String topic;
 	private Integer lid;
-	int process;
+	private Float process;
 }

@@ -1,12 +1,12 @@
 package com.huce.edu.security;
 
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -22,6 +22,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
+@AllArgsConstructor
 public class SecurityConfig {
 
     @Autowired
@@ -41,11 +42,12 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .formLogin(Customizer.withDefaults())
-                .formLogin(form -> form
-                        .loginPage("/login")
-                        .permitAll()
-                )
+//                .formLogin(Customizer.withDefaults())
+//                .formLogin(form -> form
+//                        .loginPage("/login")
+//                        .permitAll()
+//                )
+////                .cors()
                 .authorizeHttpRequests((authorize) -> authorize
 //                                .requestMatchers("/edu-api-docs/**",
 //                                        "/edu-documentation/**",
@@ -55,15 +57,21 @@ public class SecurityConfig {
                                 .requestMatchers("/api/admin/add").hasAuthority("SUPER_ADMIN")
                                 .requestMatchers("/api/admin/**").hasAnyAuthority("SUPER_ADMIN", "ADMIN")
 
-                                .requestMatchers("/api/words/getScrambleWord").permitAll()
-                                .requestMatchers("/api/words/**" ).authenticated()
-
                                 .requestMatchers("/api/coin/**").authenticated()
                                 .requestMatchers("/api/order/**").authenticated()
+                                .requestMatchers("/api/history/**").authenticated()
 
                                 .requestMatchers("/api/product/getAll").permitAll()
                                 .requestMatchers("/api/product/**").hasAnyAuthority("SUPER_ADMIN", "ADMIN")
 
+                                .requestMatchers("/api/level/getAll").permitAll()
+                                .requestMatchers("/api/level/**").hasAnyAuthority("SUPER_ADMIN", "ADMIN")
+
+                                .requestMatchers("/api/topic/getTopicByLid").permitAll()
+                                .requestMatchers("/api/topic/**").hasAnyAuthority("SUPER_ADMIN", "ADMIN")
+
+                                .requestMatchers("/api/words/getScrambleWord").permitAll()
+                                .requestMatchers("/api/words/**").hasAnyAuthority("SUPER_ADMIN", "ADMIN")
 
                                 .anyRequest().permitAll()
                 )
@@ -85,6 +93,4 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
-
-
 }

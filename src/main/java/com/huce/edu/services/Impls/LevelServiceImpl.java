@@ -1,21 +1,20 @@
 package com.huce.edu.services.Impls;
 
-import com.huce.edu.entities.HistoryEntity;
 import com.huce.edu.entities.LevelEntity;
 import com.huce.edu.entities.TopicEntity;
 import com.huce.edu.entities.UserEntity;
 import com.huce.edu.models.dto.LevelDto;
-import com.huce.edu.models.dto.ListTopicByLevel;
-import com.huce.edu.models.dto.TopicByLevel;
-import com.huce.edu.repositories.*;
+import com.huce.edu.models.mapper.WordId;
+import com.huce.edu.repositories.HistoryRepo;
+import com.huce.edu.repositories.LevelRepo;
+import com.huce.edu.repositories.TopicRepo;
+import com.huce.edu.repositories.WordRepo;
 import com.huce.edu.services.LevelService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Component
 @RequiredArgsConstructor
@@ -24,57 +23,44 @@ public class LevelServiceImpl implements LevelService {
     private final TopicRepo topicRepo;
     private final HistoryRepo historyRepo;
     private final LevelRepo levelRepo;
-    @Override
-    public ListTopicByLevel getTopicByLevel(int lid, UserEntity user) {
-        LevelEntity level = levelRepo.findByLid(lid);
-
-        ArrayList<TopicEntity> listTopic = new ArrayList<>(topicRepo.findByLid(lid));
-        ArrayList<TopicByLevel> listTopicDto = new ArrayList<>();
-        int numWord = 0;
-        int totalProcessLevel = 0;
-        for (TopicEntity t : listTopic) {
-            numWord += wordRepo.findByTid(t.getTid()).size();
-            if (user == null) {
-                listTopicDto.add(new TopicByLevel(t.getTid(), t.getTopic(), t.getLid(), 0));
-            } else {
-                List<HistoryEntity> h = historyRepo.findByUid(user.getUid());
-                List<HistoryEntity> historyByTid = h.stream().filter(row -> wordRepo.findFirstByWid(row.getWid()).getTid().equals(t.getTid())).toList();
-                Set<Integer> seenWid = new HashSet<>();
-                for (HistoryEntity historyEntity : historyByTid) {
-                    seenWid.add(historyEntity.getWid());
-                }
-                int process = (int) (seenWid.size() * 100) / (wordRepo.findByTid(t.getTid()).size());
-                totalProcessLevel += process;
-                listTopicDto.add(new TopicByLevel(t.getTid(), t.getTopic(), t.getLid(), process));
-            }
-        }
-
-        LevelDto levelDto = new LevelDto(level.getLid(), level.getLevel(), listTopic.size(), numWord, (int) totalProcessLevel/listTopic.size());
-
-        return new ListTopicByLevel(levelDto, listTopicDto);
-    }
 
     @Override
     public ArrayList<LevelDto> getAll(UserEntity user) {
         ArrayList<LevelDto> listLevelDto = new ArrayList<>();
         List<LevelEntity> listLevelsEntities = levelRepo.findAll();
+        int uid = 0;
+        if (user != null)
+            uid = user.getUid();
 
         for (LevelEntity levelEntity : listLevelsEntities) {
             List<TopicEntity> listTopicsByLid = topicRepo.findByLid(levelEntity.getLid());
-            int numTopic = topicRepo.findByLid(levelEntity.getLid()).size();
-            int numWord = 0;
-            for (TopicEntity t : listTopicsByLid) {
-                numWord += wordRepo.findByTid(t.getTid()).size();
-            }
-            if (user == null) {
-                listLevelDto.add(new LevelDto(levelEntity.getLid(), levelEntity.getLevel(), numTopic, numWord, 0));
-            } else {
-                List<HistoryEntity> h = historyRepo.findByUid(user.getUid());
-                long numCorrects = h.stream().filter(l -> l.getIscorrect() == 1).count();
-                listLevelDto.add(new LevelDto(levelEntity.getLid(), levelEntity.getLevel(), numTopic, numWord, (int) (numCorrects / numWord)));
-            }
+            int numTopic = listTopicsByLid.size();
+            List<Integer> words = new ArrayList<>(wordRepo.getByTidIn(listTopicsByLid.stream().map(TopicEntity::getTid).toList())).stream().map(WordId::getWid).toList();
+            int numCorrects = (int) historyRepo.findByUid(uid).stream().filter(t -> t.getIscorrect() == 1 && words.contains(t.getWid())).count();
+            listLevelDto.add(LevelDto.create(levelEntity.getLid(), levelEntity.getLevel(), numTopic, words.size(), numCorrects == 0 ? 0 : (float)  numCorrects/words.size()*100));
         }
-
         return listLevelDto;
     }
+
+    @Override
+    public LevelEntity add(String name) {
+        LevelEntity newLevel = LevelEntity.create(0, name);
+        levelRepo.save(newLevel);
+        return newLevel;
+    }
+
+    @Override
+    public LevelEntity edit(LevelEntity levelEntity) {
+        levelRepo.save(levelEntity);
+        return levelEntity;
+    }
+
+    @Override
+    public LevelEntity delete(Integer id) {
+        LevelEntity level = levelRepo.findByLid(id);
+        levelRepo.delete(level);
+
+        return level;
+    }
+
 }

@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -30,6 +31,15 @@ public class CoinController {
     private final WordRepo wordRepo;
     private final HistoryService historyService;
 
+    @GetMapping("/getCoin")
+    public ResponseEntity<ApiResult<?>> getCoin(HttpServletRequest request) {
+        String email = BearerTokenUtil.getUserName(request);
+        UserEntity user = userAccountRepo.findFirstByEmail(email);
+        ApiResult<?> result =ApiResult.create(HttpStatus.OK, "Lấy thành công Coin.", user.getCoin());
+        return ResponseEntity.ok(result);
+    }
+
+
     /* Sau code sửa sau */
     @GetMapping("/post")
     public ResponseEntity<ApiResult<?>> sendAnswer(HttpServletRequest request, @RequestParam String answer, @RequestParam int wid) {
@@ -37,7 +47,7 @@ public class CoinController {
 
         String email = BearerTokenUtil.getUserName(request);
         UserEntity user = userAccountRepo.findFirstByEmail(email);
-        List<HistoryEntity> historyEntityList = historyRepo.findByUid(user.getUid());
+        ArrayList<HistoryEntity> historyEntityList = historyRepo.findByUid(user.getUid());
         if (!wordRepo.existsByWid(wid)) {
             result = ApiResult.create(HttpStatus.BAD_REQUEST, "Câu hỏi không tồn tại!", 0);
             return ResponseEntity.ok(result);

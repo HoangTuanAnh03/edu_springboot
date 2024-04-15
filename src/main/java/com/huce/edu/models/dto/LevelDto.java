@@ -5,12 +5,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
+@AllArgsConstructor(staticName = "create")
 @NoArgsConstructor
 public class LevelDto {
 	int lid;
 	String levelName;
 	Integer numTopics;
 	Integer numWords;
-	Integer process;
+	Float process;
 }

@@ -62,4 +62,41 @@ public class WordController {
 		return ResponseEntity.ok(result);
 	}
 
+	@PostMapping("/add")
+	public ResponseEntity<ApiResult<WordEntity>> add(@RequestBody WordEntity wordEntity) {
+		if (!topicRepo.existsByTid(wordEntity.getTid())) {
+			ApiResult<WordEntity> result = ApiResult.create(HttpStatus.BAD_REQUEST, "Không tồn tại Topic!!", null);
+			return ResponseEntity.ok(result);
+		}
+
+		ApiResult<WordEntity> result = ApiResult.create(HttpStatus.OK, "Them thành công level", wordService.add(wordEntity));
+		return ResponseEntity.ok(result);
+	}
+
+	@PutMapping("/edit")
+	public ResponseEntity<ApiResult<WordEntity>> edit(@RequestBody WordEntity wordEntity) {
+		if (!wordRepo.existsByWid(wordEntity.getWid())) {
+			ApiResult<WordEntity> result = ApiResult.create(HttpStatus.BAD_REQUEST, "Không tồn tại Wid!!", null);
+			return ResponseEntity.ok(result);
+		}
+		if (!topicRepo.existsByTid(wordEntity.getTid())) {
+			ApiResult<WordEntity> result = ApiResult.create(HttpStatus.BAD_REQUEST, "Không tồn tại Topic!!", null);
+			return ResponseEntity.ok(result);
+		}
+
+		ApiResult<WordEntity> result = ApiResult.create(HttpStatus.OK, "Sua thành công level", wordService.edit(wordEntity));
+		return ResponseEntity.ok(result);
+	}
+
+	@DeleteMapping("/delete")
+	public ResponseEntity<ApiResult<WordEntity>> delete(@RequestParam Integer id) {
+		if (!wordRepo.existsByWid(id)) {
+			ApiResult<WordEntity> result = ApiResult.create(HttpStatus.BAD_REQUEST, "Không tồn tại Wid!!", null);
+			return ResponseEntity.ok(result);
+		}
+
+		ApiResult<WordEntity> result = ApiResult.create(HttpStatus.OK, "Xoa thành công level", wordService.delete(id));
+		return ResponseEntity.ok(result);
+	}
+
 }
