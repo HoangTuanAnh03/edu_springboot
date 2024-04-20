@@ -50,7 +50,7 @@ public class ProductController {
         );
         productRepo.save(newProduct);
 
-        result = ApiResult.create(HttpStatus.OK, "Lấy thành công sản phẩm.", productRepo.findFirstByName(newProduct.getName()));
+        result = ApiResult.create(HttpStatus.OK, "Thêm thành công sản phẩm.", productRepo.findFirstByName(newProduct.getName()));
         return ResponseEntity.ok(result);
     }
 

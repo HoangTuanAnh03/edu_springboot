@@ -24,7 +24,11 @@ public class WordController {
 	private final UserAccountRepo userAccountRepo;
 	private final HistoryRepo historyRepo;
 	private final WordService wordService;
-
+	@GetMapping("/getAll")
+	public ResponseEntity<ApiResult<ArrayList<WordEntity>>> getAll(@RequestParam int tid) {
+		ArrayList<WordEntity> words = new ArrayList<>(wordRepo.findByTid(tid));
+		return ResponseEntity.ok(ApiResult.create(HttpStatus.OK, "Lấy ScrambleWord thành công", words));
+	}
 	@GetMapping("/getScrambleWord")
 	public ResponseEntity<ApiResult<WordEntity>> getScrambleWord(){
 		ArrayList<WordEntity> words = new ArrayList<>(wordRepo.findAll());
@@ -63,13 +67,14 @@ public class WordController {
 	}
 
 	@PostMapping("/add")
-	public ResponseEntity<ApiResult<WordEntity>> add(@RequestBody WordEntity wordEntity) {
-		if (!topicRepo.existsByTid(wordEntity.getTid())) {
+	public ResponseEntity<ApiResult<WordEntity>> add(@RequestBody WordEntity wordEntity, @RequestParam String topic, @RequestParam int lid) {
+		TopicEntity t = topicRepo.findByTopicAndLid(topic, lid);
+		if (t == null) {
 			ApiResult<WordEntity> result = ApiResult.create(HttpStatus.BAD_REQUEST, "Không tồn tại Topic!!", null);
 			return ResponseEntity.ok(result);
 		}
-
-		ApiResult<WordEntity> result = ApiResult.create(HttpStatus.OK, "Them thành công level", wordService.add(wordEntity));
+		wordEntity.setTid(t.getTid());
+		ApiResult<WordEntity> result = ApiResult.create(HttpStatus.OK, "Them thành công từ vựng", wordService.add(wordEntity));
 		return ResponseEntity.ok(result);
 	}
 
@@ -84,7 +89,7 @@ public class WordController {
 			return ResponseEntity.ok(result);
 		}
 
-		ApiResult<WordEntity> result = ApiResult.create(HttpStatus.OK, "Sua thành công level", wordService.edit(wordEntity));
+		ApiResult<WordEntity> result = ApiResult.create(HttpStatus.OK, "Sua thành công từ vựng", wordService.edit(wordEntity));
 		return ResponseEntity.ok(result);
 	}
 
@@ -95,7 +100,7 @@ public class WordController {
 			return ResponseEntity.ok(result);
 		}
 
-		ApiResult<WordEntity> result = ApiResult.create(HttpStatus.OK, "Xoa thành công level", wordService.delete(id));
+		ApiResult<WordEntity> result = ApiResult.create(HttpStatus.OK, "Xoa thành công từ vựng", wordService.delete(id));
 		return ResponseEntity.ok(result);
 	}
 

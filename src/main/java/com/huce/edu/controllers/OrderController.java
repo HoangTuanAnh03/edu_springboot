@@ -15,7 +15,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 
 @CrossOrigin("*")
@@ -37,7 +39,11 @@ public class OrderController {
         ApiResult<List<OrderEntity>> result = ApiResult.create(HttpStatus.OK, "Lấy thành công lịch sử order.", orderRepo.findByUid(user.getUid()));
         return ResponseEntity.ok(result);
     }
-
+    @GetMapping("/getAllOrder")
+    public ResponseEntity<ApiResult<ArrayList<Map<String, Object>>>> getAllOrder() {
+        ApiResult<ArrayList<Map<String, Object>>> result = ApiResult.create(HttpStatus.OK, "Lấy thành công lịch sử order.", orderService.getAllOrderDetail());
+        return ResponseEntity.ok(result);
+    }
     @PostMapping("/add")
     public ResponseEntity<ApiResult<?>> add(HttpServletRequest request, @RequestBody OrderDto orderDto) {
         ApiResult<?> result;

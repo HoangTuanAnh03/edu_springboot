@@ -16,7 +16,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
@@ -74,6 +76,29 @@ public class TopicServiceImpl implements TopicService {
         topicRepo.delete(topic);
         return topic;
     }
-
+    @Override
+    public ArrayList<Map<String, String>> getAllTopic(){
+        ArrayList<Map<String, String>> res = new ArrayList<>();
+        List<TopicEntity> topic = topicRepo.findAll();
+        topic.forEach(item -> {
+            res.add(mapGetTopicByTid(item.getTid()));
+        });
+        return res;
+    }
+    @Override
+    public Map<String, String> getTopicByTid(int tid){
+        return mapGetTopicByTid(tid);
+    }
+    public Map<String, String> mapGetTopicByTid(int tid){
+        Map<String, String> res = new HashMap<>();
+        TopicEntity topic = topicRepo.findFirstByTid(tid);
+        res.put("tid", String.valueOf(topic.getTid()));
+        res.put("tname", String.valueOf(topic.getTopic()));
+        int numWord = wordRepo.findByTid(topic.getTid()).size();
+        res.put("numWord", String.valueOf(numWord));
+        res.put("lid", String.valueOf(topic.getLid()));
+        res.put("levelName", String.valueOf(levelRepo.findByLid(topic.getLid()).getLevel()));
+        return res;
+    }
 
 }
