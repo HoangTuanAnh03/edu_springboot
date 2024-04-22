@@ -54,6 +54,8 @@ public class SecurityConfig {
 //                                        "/swagger-ui/**").permitAll()
                                 .requestMatchers("/api/admin/sign-in",
                                         "/api/admin/verifyRefreshToken").permitAll()
+                                .requestMatchers("/api/users/sign-in",
+                                        "/api/users/verifyRefreshToken", "/api/users/forgetPassword/**").permitAll()
                                 .requestMatchers("/api/admin/add").hasAuthority("SUPER_ADMIN")
                                 .requestMatchers("/api/admin/**").hasAnyAuthority("SUPER_ADMIN", "ADMIN")
 
@@ -76,6 +78,9 @@ public class SecurityConfig {
 
                                 .requestMatchers("/api/words/getAll").permitAll()
                                 .requestMatchers("/api/words/getScrambleWord").permitAll()
+                                .requestMatchers("/api/words/getQuestionByTid").authenticated()
+                                .requestMatchers("/api/words/getTest").authenticated()
+
                                 .requestMatchers("/api/words/**").hasAnyAuthority("SUPER_ADMIN", "ADMIN")
 
                                 .anyRequest().permitAll()

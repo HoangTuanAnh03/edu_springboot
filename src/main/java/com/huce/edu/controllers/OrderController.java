@@ -63,7 +63,7 @@ public class OrderController {
             result = ApiResult.create(HttpStatus.BAD_REQUEST, "Số lượng sản phẩm không hợp lệ!!!", null);
             return ResponseEntity.ok(result);
         }
-        result = ApiResult.create(HttpStatus.BAD_REQUEST, "Đổi sản phẩm thành công.", orderService.add(orderDto, user));
+        result = ApiResult.create(HttpStatus.OK, "Đổi sản phẩm thành công.", orderService.add(orderDto, user));
         return ResponseEntity.ok(result);
     }
 }
