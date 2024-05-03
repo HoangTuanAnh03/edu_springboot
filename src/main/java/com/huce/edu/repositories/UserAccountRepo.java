@@ -9,6 +9,8 @@ import java.util.Optional;
 @Repository
 public interface UserAccountRepo extends JpaRepository<UserEntity, Integer> {
     boolean existsByEmail(String email);
+
+    boolean existsByEmailAndStatus(String email, Integer status);
     UserEntity findFirstByUid(int id);
     UserEntity findFirstByEmail(String email);
 

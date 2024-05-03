@@ -9,7 +9,6 @@ spring:
     restart:
       poll-interval: 1s
 
-
   jpa:
     show-sql: true
     #    generate-ddl: true
@@ -47,5 +46,5 @@ springdoc:
   packages-to-scan: com.huce.edu.controllers
 
 
-
-
+server:
+  port: 8080

@@ -11,6 +11,9 @@ public interface OtpRepo extends JpaRepository<OtpEntity, Integer> {
 //    OtpEntity findFirstByEmail(String email);
     OtpEntity findFirstByUid(int userId);
 
+    OtpEntity findFirstByEmail(String email);
+    boolean existsByEmailAndCode(String email, String otp);
+
 
 
 //    boolean existsByEmail(String email);

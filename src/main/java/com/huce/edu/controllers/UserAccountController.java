@@ -55,11 +55,11 @@ public class UserAccountController {
             /* Kiểm tra xem Otp có bị giới hạn gửi lại không */
             OtpEntity otp = otpRepo.findFirstByUid(user.getUid());
             if (otp != null){
-                if (!userAccountService.isTimeOutRequired(otp, Constants.OTP_VALID_DURATION_1P)) {
-                    result = ApiResult.create(HttpStatus.BAD_REQUEST, "Bạn hãy chờ 1p để gửi lại OTP", email);
-                    return ResponseEntity.ok(result);
-
-                }
+//                if (!userAccountService.isTimeOutRequired(otp, Constants.OTP_VALID_DURATION_1P)) {
+//                    result = ApiResult.create(HttpStatus.BAD_REQUEST, "Bạn hãy chờ 1p để gửi lại OTP", email);
+//                    return ResponseEntity.ok(result);
+//
+//                }
 
                 if (otp.getFailattempts() >= 5 && !userAccountService.isTimeOutRequired(otp, Constants.OTP_VALID_DURATION_5P)) {
                     result = ApiResult.create(HttpStatus.BAD_REQUEST, "Bạn hãy chờ 5p để gửi lại OTP vì bạn đã nhập quá 5 lần", email);
