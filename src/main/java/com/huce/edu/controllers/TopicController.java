@@ -97,7 +97,7 @@ public class TopicController {
     public ResponseEntity<ApiResult<TopicEntity>> delete(@RequestParam Integer id) {
         TopicEntity topic = topicRepo.findFirstByTid(id);
         if (topic == null) {
-            ApiResult<TopicEntity> result = ApiResult.create(HttpStatus.BAD_REQUEST, "Không tồn tại Level!!", null);
+            ApiResult<TopicEntity> result = ApiResult.create(HttpStatus.BAD_REQUEST, "Không tồn tại Topic!!", null);
             return ResponseEntity.ok(result);
         }
 
@@ -106,7 +106,7 @@ public class TopicController {
             return ResponseEntity.ok(result);
         }
 
-        ApiResult<TopicEntity> result = ApiResult.create(HttpStatus.OK, "Xoa thành công level", topicService.delete(id));
+        ApiResult<TopicEntity> result = ApiResult.create(HttpStatus.OK, "Xoa thành công Topic", topicService.delete(id));
         return ResponseEntity.ok(result);
     }
 }

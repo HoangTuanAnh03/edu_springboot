@@ -27,7 +27,7 @@ public class ProductController {
     private final ProductRepo productRepo;
     @GetMapping("/getAll")
     public ResponseEntity<ApiResult<List<ProductEntity>>> getAll() {
-        ApiResult<List<ProductEntity>> result = ApiResult.create(HttpStatus.OK, "Lấy thành công sản phẩm.", productRepo.findAll());
+        ApiResult<List<ProductEntity>> result = ApiResult.create(HttpStatus.OK, "Lấy thành công sản phẩm.", productRepo.findByIsDeletedAndRemainAfter(false, 0));
         return ResponseEntity.ok(result);
     }
 

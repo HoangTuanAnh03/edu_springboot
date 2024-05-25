@@ -35,7 +35,7 @@ public class CoinController {
     public ResponseEntity<ApiResult<?>> getCoin(HttpServletRequest request) {
         String email = BearerTokenUtil.getUserName(request);
         UserEntity user = userAccountRepo.findFirstByEmail(email);
-        ApiResult<?> result =ApiResult.create(HttpStatus.OK, "Lấy thành công Coin.", user.getCoin());
+        ApiResult<?> result =ApiResult.create(HttpStatus.OK, "Lấy thành công Coin.", user.getCoin().toString());
         return ResponseEntity.ok(result);
     }
 

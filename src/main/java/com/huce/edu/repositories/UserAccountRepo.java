@@ -11,7 +11,7 @@ public interface UserAccountRepo extends JpaRepository<UserEntity, Integer> {
     boolean existsByEmail(String email);
     UserEntity findFirstByUid(int id);
     UserEntity findFirstByEmail(String email);
-
+    boolean existsByEmailAndStatus(String email, Integer status);
     Optional<UserEntity> findByEmail(String email);
 
 }

@@ -36,7 +36,18 @@ public class WordController {
 		WordEntity w = words.get(0);
 		return ResponseEntity.ok(ApiResult.create(HttpStatus.OK, "Lấy ScrambleWord thành công", w));
 	}
+	@GetMapping("/getQuestionByTidTest")
+	public ResponseEntity<ApiResult<ArrayList<WordQuestion>>> getQuestionByTidTest(@RequestParam int tid){
+		ApiResult<ArrayList<WordQuestion>> result;
 
+		if(!topicRepo.existsByTid(tid)){
+			result = ApiResult.create(HttpStatus.OK, "Topic không tồn tại", null);
+			return ResponseEntity.ok(result);
+		}
+
+		result = ApiResult.create(HttpStatus.OK, "Lấy danh sách câu hỏi thành công", wordService.getQuestionByTid(tid));
+		return ResponseEntity.ok(result);
+	}
 	@GetMapping("/getQuestionByTid")
 	public ResponseEntity<ApiResult<ArrayList<WordQuestion>>> getQuestionByTid(@RequestParam int tid){
 		ApiResult<ArrayList<WordQuestion>> result;

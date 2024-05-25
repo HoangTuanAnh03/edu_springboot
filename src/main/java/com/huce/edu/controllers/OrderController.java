@@ -6,6 +6,7 @@ import com.huce.edu.entities.ProductEntity;
 import com.huce.edu.entities.UserEntity;
 import com.huce.edu.models.ApiResult;
 import com.huce.edu.models.dto.OrderDto;
+import com.huce.edu.models.response.OrderHistoryResponse;
 import com.huce.edu.repositories.*;
 import com.huce.edu.services.OrderService;
 import com.huce.edu.utils.BearerTokenUtil;
@@ -32,11 +33,14 @@ public class OrderController {
     private final OrderRepo orderRepo;
 
     @GetMapping("/getAll")
-    public ResponseEntity<ApiResult<List<OrderEntity>>> getAll(HttpServletRequest request) {
+    public ResponseEntity<ApiResult<List<OrderHistoryResponse>>> getAll(HttpServletRequest request) {
         String email = BearerTokenUtil.getUserName(request);
         UserEntity user = userAccountRepo.findFirstByEmail(email);
-
-        ApiResult<List<OrderEntity>> result = ApiResult.create(HttpStatus.OK, "Lấy thành công lịch sử order.", orderRepo.findByUid(user.getUid()));
+        if(user == null){
+            ApiResult<List<OrderHistoryResponse>> result = ApiResult.create(HttpStatus.OK, "Lấy thành công lịch sử order.", null);
+            return ResponseEntity.ok(result);
+        }
+        ApiResult<List<OrderHistoryResponse>> result = ApiResult.create(HttpStatus.OK, "Lấy thành công lịch sử order.", orderService.getOrderHistory(user.getUid()));
         return ResponseEntity.ok(result);
     }
     @GetMapping("/getAllOrder")
