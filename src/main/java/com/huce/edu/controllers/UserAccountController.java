@@ -64,7 +64,6 @@ public class UserAccountController {
                 if (otp.getFailattempts() >= 5 && !userAccountService.isTimeOutRequired(otp, Constants.OTP_VALID_DURATION_5P)) {
                     result = ApiResult.create(HttpStatus.BAD_REQUEST, "Bạn hãy chờ 5p để gửi lại OTP vì bạn đã nhập quá 5 lần", email);
                     return ResponseEntity.ok(result);
-
                 }
             }
         } else {

@@ -65,26 +65,4 @@ public class AndroidController {
         ApiResult<String> result = ApiResult.create(HttpStatus.OK, "Lấy trạng thái thành công.", "false");
         return ResponseEntity.ok(result);
     }
-
-
-//    @GetMapping("/sign-out")
-//    public ResponseEntity<ApiResult<?>> logout(HttpServletRequest request) {
-//        ApiResult<?> result = null;
-//        String token = BearerTokenUtil.getToken(request);
-//        String username = BearerTokenUtil.getUserName(request);
-//
-//        if (username != null) {
-//            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-//            UserEntity user = userAccountRepo.findFirstByEmail(username);
-//            KeytokenEntity keyByUser = keyRepo.findFirstByUid(user.getUid());
-//            if (jwtService.validateToken(token, keyByUser.getPublickey(), userDetails)) {
-//                keyRepo.delete(keyByUser);
-//                result = ApiResult.create(HttpStatus.OK, "logout Success!!", username);
-//            } else {
-//                result = ApiResult.create(HttpStatus.BAD_REQUEST, "Token không đúng!!", username);
-//            }
-//        }
-//
-//        return ResponseEntity.ok(result);
-//    }
 }
