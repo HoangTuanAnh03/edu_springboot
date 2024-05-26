@@ -15,6 +15,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.Map;
 import java.util.Objects;
 
 
@@ -44,7 +46,16 @@ public class TopicController {
         result = ApiResult.create(HttpStatus.OK, "Lấy danh sách chủ đề thành công", topicService.getTopicByLevel(lid, user));
         return ResponseEntity.ok(result);
     }
-
+    @GetMapping("/getAllTopic")
+    public ResponseEntity<ApiResult<ArrayList<Map<String, String>>>> getAllTopic(){
+        ApiResult<ArrayList<Map<String, String>>> result = ApiResult.create(HttpStatus.OK, "Lấy danh sách chủ đề thành công", topicService.getAllTopic());
+        return ResponseEntity.ok(result);
+    }
+    @GetMapping("/getTopicByTid")
+    public ResponseEntity<ApiResult<Map<String, String>>> getTopicByTid(@RequestParam int tid){
+        ApiResult<Map<String, String>> result = ApiResult.create(HttpStatus.OK, "Lấy danh sách chủ đề thành công", topicService.getTopicByTid(tid));
+        return ResponseEntity.ok(result);
+    }
     @PostMapping("/add")
     public ResponseEntity<ApiResult<TopicEntity>> add(@RequestParam Integer lid, @RequestParam String name) {
         ApiResult<TopicEntity> result;

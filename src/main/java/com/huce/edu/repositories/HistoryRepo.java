@@ -13,7 +13,7 @@ public interface HistoryRepo extends JpaRepository<HistoryEntity, Integer> {
 
     ArrayList<HistoryEntity> findByUid(Integer uid);
     ArrayList<HistoryEntity> findByUidAndIscorrectAndWidIn(Integer uid, Integer isCorrect, List<Integer> wid);
-
+    ArrayList<HistoryEntity> findByIscorrect(Integer isCorrect);
 
     HistoryEntity findByWid(Integer wid);
 

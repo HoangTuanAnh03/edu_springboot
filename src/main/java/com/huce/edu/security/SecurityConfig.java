@@ -54,9 +54,12 @@ public class SecurityConfig {
 //                                        "/swagger-ui/**").permitAll()
                                 .requestMatchers("/api/admin/sign-in",
                                         "/api/admin/verifyRefreshToken").permitAll()
+                                .requestMatchers("/api/users/sign-in",
+                                        "/api/users/verifyRefreshToken", "/api/users/forgetPassword/**").permitAll()
                                 .requestMatchers("/api/admin/add").hasAuthority("SUPER_ADMIN")
                                 .requestMatchers("/api/admin/**").hasAnyAuthority("SUPER_ADMIN", "ADMIN")
 
+                                .requestMatchers("/api/order/getAllOrder").hasAnyAuthority("SUPER_ADMIN", "ADMIN")
                                 .requestMatchers("/api/coin/**").authenticated()
                                 .requestMatchers("/api/order/**").authenticated()
                                 .requestMatchers("/api/history/**").authenticated()
@@ -68,9 +71,16 @@ public class SecurityConfig {
                                 .requestMatchers("/api/level/**").hasAnyAuthority("SUPER_ADMIN", "ADMIN")
 
                                 .requestMatchers("/api/topic/getTopicByLid").permitAll()
+                                .requestMatchers("/api/topic/getTopicByTid").permitAll()
+
+                                .requestMatchers("/api/topic/getAllTopic").permitAll()
                                 .requestMatchers("/api/topic/**").hasAnyAuthority("SUPER_ADMIN", "ADMIN")
 
+                                .requestMatchers("/api/words/getAll").permitAll()
                                 .requestMatchers("/api/words/getScrambleWord").permitAll()
+                                .requestMatchers("/api/words/getQuestionByTid").authenticated()
+                                .requestMatchers("/api/words/getTest").authenticated()
+
                                 .requestMatchers("/api/words/**").hasAnyAuthority("SUPER_ADMIN", "ADMIN")
 
                                 .anyRequest().permitAll()

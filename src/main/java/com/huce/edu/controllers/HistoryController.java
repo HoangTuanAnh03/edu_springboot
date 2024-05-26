@@ -13,7 +13,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @CrossOrigin("*")
@@ -24,7 +26,7 @@ public class HistoryController {
 
     private final UserAccountRepo userAccountRepo;
     private final TestHistoryRepo testHistoryRepo;
-
+    private final HistoryRepo historyRepo;
     @GetMapping("/getAll")
     public ResponseEntity<ApiResult<List<TestHistoryEntity>>> getAll(HttpServletRequest request) {
         String email = BearerTokenUtil.getUserName(request);
@@ -33,7 +35,15 @@ public class HistoryController {
         ApiResult<List<TestHistoryEntity>> result = ApiResult.create(HttpStatus.OK, "Lấy danh sách bai Test thành công", testHistoryRepo.findByUid(user.getUid()));
         return ResponseEntity.ok(result);
     }
+    @GetMapping("/getNumCorrectAndInCorrectAns")
+    public ResponseEntity<ApiResult<Map<String, Integer>>> getNumCorrectAndInCorrectAns() {
+        Map<String, Integer> map = new HashMap<>();
+        map.put("correct", historyRepo.findByIscorrect(1).size());
+        map.put("incorrect", historyRepo.findByIscorrect(0).size());
 
+        ApiResult<Map<String, Integer>> result = ApiResult.create(HttpStatus.OK, "Lấy danh sách bai Test thành công", map);
+        return ResponseEntity.ok(result);
+    }
     @PostMapping("/add")
     public ResponseEntity<ApiResult<TestHistoryEntity>> add(HttpServletRequest request, @RequestParam int numQues, @RequestParam int numCorrectQues) {
         String email = BearerTokenUtil.getUserName(request);

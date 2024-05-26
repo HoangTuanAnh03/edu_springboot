@@ -35,7 +35,6 @@ public class LevelController {
         ApiResult<ArrayList<LevelDto>> result = ApiResult.create(HttpStatus.OK, "Lấy thành công level", levelService.getAll(user));
         return ResponseEntity.ok(result);
     }
-
     @PostMapping("/add")
     public ResponseEntity<ApiResult<LevelEntity>> add(@RequestParam String name) {
         if (levelRepo.existsByLevel(name)) {

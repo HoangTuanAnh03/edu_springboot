@@ -13,6 +13,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.*;
+
 @Component
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
@@ -44,5 +46,20 @@ public class OrderServiceImpl implements OrderService {
         productRepo.save(product);
 
         return newOrder;
+    }
+    @Override
+    public ArrayList<Map<String, Object>> getAllOrderDetail(){
+        ArrayList<Map<String, Object>> orderDetails = new ArrayList<>();
+        List<OrderEntity> order = orderRepo.findAll();
+        for(OrderEntity o : order){
+            Map<String, Object> detail = new HashMap<>();
+            detail.put("oid", o.getOid());
+            detail.put("date", o.getDate());
+            detail.put("quantity", o.getQuantity());
+            detail.put("address", o.getAddress());
+            detail.put("pname", productRepo.findFirstByPid(o.getPid()).getName());
+            orderDetails.add(detail);
+        }
+        return orderDetails;
     }
 }
