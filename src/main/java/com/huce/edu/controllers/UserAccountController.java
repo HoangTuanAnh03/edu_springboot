@@ -8,11 +8,16 @@ import com.huce.edu.enums.VerificationEnum;
 import com.huce.edu.models.ApiResult;
 import com.huce.edu.models.dto.ResetPasswordDto;
 import com.huce.edu.models.dto.UserAccountDto;
+import com.huce.edu.models.dto.WordQuestion;
+import com.huce.edu.repositories.HistoryRepo;
 import com.huce.edu.repositories.OtpRepo;
 import com.huce.edu.repositories.UserAccountRepo;
+import com.huce.edu.repositories.WordRepo;
 import com.huce.edu.services.UserAccountService;
 import com.huce.edu.shareds.Constants;
+import com.huce.edu.utils.BearerTokenUtil;
 import jakarta.mail.MessagingException;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,6 +26,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping(path = "/api/users")
@@ -31,7 +39,8 @@ public class UserAccountController {
     private final UserAccountService userAccountService;
     private final UserAccountRepo userAccountRepo;
     private final OtpRepo otpRepo;
-
+    private final HistoryRepo historyRepo;
+    private final WordRepo wordRepo;
 
     
     @PostMapping(path = "/register")
@@ -44,6 +53,28 @@ public class UserAccountController {
             case SUCCESS ->
                 result = ApiResult.create(HttpStatus.OK, registerEnum.getDescription(), userAccountDto);
         }
+        return ResponseEntity.ok(result);
+    }
+    @GetMapping(path = "/getUserInformation")
+    public ResponseEntity<ApiResult<Map<String, String>>> getUserInformation(HttpServletRequest request){
+        ApiResult<Map<String, String>> result;
+        String email = BearerTokenUtil.getUserName(request);
+        UserEntity user = userAccountRepo.findFirstByEmail(email);
+        Map<String, String> data = new HashMap<>();
+
+        if(user == null){
+            result = ApiResult.create(HttpStatus.NOT_FOUND, "Bạn phải học trên 10 câu để truy cập", null);
+            return ResponseEntity.ok(result);
+        }
+        String name = user.getName();
+        String coin = user.getCoin().intValue() + " dats";
+        int numAnswer = historyRepo.findByUid(user.getUid()).size();
+        String progress = String.format("%s/%s", numAnswer, wordRepo.findAll().size());
+        data.put("email", email);
+        data.put("name", name);
+        data.put("coin", coin);
+        data.put("progress", progress);
+        result = ApiResult.create(HttpStatus.OK, "Lấy thông tin thành công", data);
         return ResponseEntity.ok(result);
     }
 

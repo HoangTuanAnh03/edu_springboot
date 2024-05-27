@@ -4,6 +4,7 @@ import com.huce.edu.entities.OrderEntity;
 import com.huce.edu.entities.ProductEntity;
 import com.huce.edu.entities.UserEntity;
 import com.huce.edu.models.dto.OrderDto;
+import com.huce.edu.models.response.OrderHistoryResponse;
 import com.huce.edu.repositories.OrderRepo;
 import com.huce.edu.repositories.ProductRepo;
 import com.huce.edu.repositories.UserAccountRepo;
@@ -61,5 +62,27 @@ public class OrderServiceImpl implements OrderService {
             orderDetails.add(detail);
         }
         return orderDetails;
+    }
+
+
+    @Override
+    public List<OrderHistoryResponse> getOrderHistory(Integer uid) {
+        List<OrderHistoryResponse> orderHistoryResponses = new ArrayList<>();
+        List<OrderEntity> orderEntities = orderRepo.findByUid(uid);
+        for(OrderEntity o : orderEntities){
+            ProductEntity p = productRepo.findFirstByPid(o.getPid());
+            OrderHistoryResponse temp = OrderHistoryResponse.create(
+                    o.getDate(),
+                    o.getAddress(),
+                    o.getPrice(),
+                    o.getQuantity(),
+                    o.getPhone(),
+                    p.getName(),
+                    p.getImage()
+            );
+            orderHistoryResponses.add(temp);
+        }
+        orderHistoryResponses.sort(Collections.reverseOrder(Comparator.comparing(OrderHistoryResponse::getDate)));
+        return orderHistoryResponses;
     }
 }

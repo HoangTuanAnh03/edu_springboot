@@ -77,6 +77,7 @@ public class SecurityConfig {
                                 .requestMatchers("/api/topic/**").hasAnyAuthority("SUPER_ADMIN", "ADMIN")
 
                                 .requestMatchers("/api/words/getAll").permitAll()
+                                .requestMatchers("/api/words/getQuestionByTidTest").permitAll()
                                 .requestMatchers("/api/words/getScrambleWord").permitAll()
                                 .requestMatchers("/api/words/getQuestionByTid").authenticated()
                                 .requestMatchers("/api/words/getTest").authenticated()
