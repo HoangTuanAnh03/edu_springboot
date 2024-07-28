@@ -13,7 +13,7 @@ import com.huce.edu.repositories.KeyRepo;
 import com.huce.edu.repositories.OtpRepo;
 import com.huce.edu.repositories.UserAccountRepo;
 import com.huce.edu.repositories.VerificationCodeRepo;
-import com.huce.edu.security.JwtService;
+//import com.huce.edu.security.JwtService;
 import com.huce.edu.services.SendMailService;
 import com.huce.edu.services.UserAccountService;
 import com.huce.edu.shareds.Constants;
@@ -39,7 +39,7 @@ public class UserAccountServiceImpl implements UserAccountService {
     private final VerificationCodeRepo verificationCodeRepo;
     private final KeyRepo keyRepo;
 
-    private final JwtService jwtService;
+//    private final JwtService jwtService;
     private final SendMailService sendMailService;
     private final PasswordEncoder passwordEncoder;
 
@@ -183,8 +183,8 @@ public class UserAccountServiceImpl implements UserAccountService {
                     keyRepo.delete(keyByUserId);
                 }
 
-                KeytokenEntity newKey = KeytokenEntity.create(0, currentUser.getUid(), null, privateKey, publicKey, jwtService.generateRefreshToken(userByEmail.getEmail(), privateKey));
-                keyRepo.save(newKey);
+//                KeytokenEntity newKey = KeytokenEntity.create(0, currentUser.getUid(), null, privateKey, publicKey, jwtService.generateRefreshToken(userByEmail.getEmail(), privateKey));
+//                keyRepo.save(newKey);
 
                 return RegisterEnum.SUCCESS;
             }
@@ -218,8 +218,8 @@ public class UserAccountServiceImpl implements UserAccountService {
             verificationCodeRepo.save(verificationCode);
 
             /* Tạo mới key */
-            KeytokenEntity newKey = KeytokenEntity.create(0, currentUser.getUid(), null, privateKey, publicKey, jwtService.generateRefreshToken(UserEntity.getEmail(), privateKey));
-            keyRepo.save(newKey);
+//            KeytokenEntity newKey = KeytokenEntity.create(0, currentUser.getUid(), null, privateKey, publicKey, jwtService.generateRefreshToken(UserEntity.getEmail(), privateKey));
+//            keyRepo.save(newKey);
 
             return RegisterEnum.SUCCESS;
         }

@@ -52,19 +52,20 @@ public class CoinController {
             result = ApiResult.create(HttpStatus.BAD_REQUEST, "Câu hỏi không tồn tại!", 0);
             return ResponseEntity.ok(result);
         }
-
-        if (historyEntityList.stream().anyMatch(t -> t.getWid() == wid)) {
-            result = ApiResult.create(HttpStatus.OK, "Câu này đã trả lời trước đây", 0);
-            return ResponseEntity.ok(result);
-        }
-
         if (wordRepo.findByWid(wid).getWord().equalsIgnoreCase(answer)) {
-            user.setCoin(user.getCoin()+Constants.ANSWER_BONUS_AMOUNT);
-            userAccountRepo.save(user);
-            historyService.create(HistoryDto.create(user.getUid(), wid, 1));
-            result = ApiResult.create(HttpStatus.OK, "Nhận được xu", Constants.ANSWER_BONUS_AMOUNT);
+            if(historyEntityList.stream().anyMatch(t -> t.getWid() == wid)){
+                result = ApiResult.create(HttpStatus.OK, "Bạn đã trả lời đúng", 0);
+            }
+            else{
+                user.setCoin(user.getCoin()+Constants.ANSWER_BONUS_AMOUNT);
+                userAccountRepo.save(user);
+                historyService.create(HistoryDto.create(user.getUid(), wid, 1));
+                result = ApiResult.create(HttpStatus.OK, "Nhận được xu", Constants.ANSWER_BONUS_AMOUNT);
+            }
         } else {
-            historyService.create(HistoryDto.create(user.getUid(), wid, 0));
+            if(historyEntityList.stream().noneMatch(t -> t.getWid() == wid)){
+                historyService.create(HistoryDto.create(user.getUid(), wid, 0));
+            }
             result = ApiResult.create(HttpStatus.OK, "Bạn đã trả lời sai", 0);
         }
         return ResponseEntity.ok(result);

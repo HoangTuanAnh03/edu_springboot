@@ -13,26 +13,26 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-@Component
-@Service
-public class UserInfoUserDetailsService implements UserDetailsService {
-    @Autowired
-    private UserAccountRepo userAccountRepo;
-
-    @Autowired
-    private AdminsRepo adminsRepo;
-
-    @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Optional<UserEntity> user = userAccountRepo.findByEmail(email);
-
-        if(user.isEmpty()) {
-            Optional<AdminsEntity> admin = adminsRepo.findByEmail(email);
-            return admin.map(UserInfoUserDetails::new)
-                    .orElseThrow(() -> new UsernameNotFoundException("Admin not found " + email));
-        }
-
-        return user.map(UserInfoUserDetails::new)
-                .orElseThrow(()-> new UsernameNotFoundException("User not found " + email));
-    }
-}
+//@Component
+//@Service
+//public class UserInfoUserDetailsService implements UserDetailsService {
+//    @Autowired
+//    private UserAccountRepo userAccountRepo;
+//
+//    @Autowired
+//    private AdminsRepo adminsRepo;
+//
+//    @Override
+//    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+//        Optional<UserEntity> user = userAccountRepo.findByEmail(email);
+//
+//        if(user.isEmpty()) {
+//            Optional<AdminsEntity> admin = adminsRepo.findByEmail(email);
+//            return admin.map(UserInfoUserDetails::new)
+//                    .orElseThrow(() -> new UsernameNotFoundException("Admin not found " + email));
+//        }
+//
+//        return user.map(UserInfoUserDetails::new)
+//                .orElseThrow(()-> new UsernameNotFoundException("User not found " + email));
+//    }
+//}

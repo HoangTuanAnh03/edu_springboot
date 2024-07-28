@@ -1,32 +1,35 @@
 package com.huce.edu.security;
 
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.huce.edu.utils.SecurityUtil;
+import com.nimbusds.jose.jwk.source.ImmutableSecret;
+import com.nimbusds.jose.util.Base64;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 
 @Configuration
-@EnableWebSecurity
-@EnableMethodSecurity
-@AllArgsConstructor
+@EnableMethodSecurity(securedEnabled = true)
 public class SecurityConfig {
 
-    @Autowired
-    private JwtAuthFilter authFilter;
+    @Value("${jwt.base64-secret}")
+    private String jwtKey;
 
     @Bean
     PasswordEncoder passwordEncoder() {
@@ -34,74 +37,88 @@ public class SecurityConfig {
     }
 
     @Bean
-    public UserDetailsService userDetailsService() {
-        return new UserInfoUserDetailsService();
-    }
+    public SecurityFilterChain filterChain(HttpSecurity http, CustomAuthenticationEntryPoint customAuthenticationEntryPoint) throws Exception {
+        String[] whiteList = {
+                "/",
+                "/api/admin/sign-in", "/api/admin/verifyRefreshToken",
+                "/api/users/sign-in", "/api/users/verifyRefreshToken", "/api/users/forgetPassword/**",
+                "/storage/**",
+                "/api/v1/email/**",
+                "/edu-api-docs/**",
+                "/swagger-ui/**",
+                "/swagger-ui.html",
+                "/edu-documentation/**",
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+                "/api/product/getAll",
+                "/api/level/getAll",
+                "/api/topic/getTopicByLid",
+                "/api/topic/getTopicByTid",
+                "/api/topic/getAllTopic",
+                "/api/words/getAll",
+                "/api/words/getQuestionByTid",
+                "/api/words/getScrambleWord",
+        };
+
         http
                 .csrf(AbstractHttpConfigurer::disable)
-//                .formLogin(Customizer.withDefaults())
-//                .formLogin(form -> form
-//                        .loginPage("/login")
-//                        .permitAll()
-//                )
-////                .cors()
+                .formLogin(AbstractHttpConfigurer::disable)
+                .cors(Customizer.withDefaults())
                 .authorizeHttpRequests((authorize) -> authorize
-//                                .requestMatchers("/edu-api-docs/**",
-//                                        "/edu-documentation/**",
-//                                        "/swagger-ui/**").permitAll()
-                                .requestMatchers("/api/admin/sign-in",
-                                        "/api/admin/verifyRefreshToken").permitAll()
-                                .requestMatchers("/api/users/sign-in",
-                                        "/api/users/verifyRefreshToken", "/api/users/forgetPassword/**").permitAll()
+                        .requestMatchers(whiteList).permitAll()
                                 .requestMatchers("/api/admin/add").hasAuthority("SUPER_ADMIN")
                                 .requestMatchers("/api/admin/**").hasAnyAuthority("SUPER_ADMIN", "ADMIN")
 
                                 .requestMatchers("/api/order/getAllOrder").hasAnyAuthority("SUPER_ADMIN", "ADMIN")
-                                .requestMatchers("/api/coin/**").authenticated()
-                                .requestMatchers("/api/order/**").authenticated()
-                                .requestMatchers("/api/history/**").authenticated()
 
-                                .requestMatchers("/api/product/getAll").permitAll()
                                 .requestMatchers("/api/product/**").hasAnyAuthority("SUPER_ADMIN", "ADMIN")
 
-                                .requestMatchers("/api/level/getAll").permitAll()
                                 .requestMatchers("/api/level/**").hasAnyAuthority("SUPER_ADMIN", "ADMIN")
 
-                                .requestMatchers("/api/topic/getTopicByLid").permitAll()
-                                .requestMatchers("/api/topic/getTopicByTid").permitAll()
-
-                                .requestMatchers("/api/topic/getAllTopic").permitAll()
                                 .requestMatchers("/api/topic/**").hasAnyAuthority("SUPER_ADMIN", "ADMIN")
-
-                                .requestMatchers("/api/words/getAll").permitAll()
-                                .requestMatchers("/api/words/getQuestionByTidTest").permitAll()
-                                .requestMatchers("/api/words/getScrambleWord").permitAll()
-                                .requestMatchers("/api/words/getQuestionByTid").authenticated()
-                                .requestMatchers("/api/words/getTest").authenticated()
 
                                 .requestMatchers("/api/words/**").hasAnyAuthority("SUPER_ADMIN", "ADMIN")
 
-                                .anyRequest().permitAll()
+                        .anyRequest().authenticated()
                 )
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authenticationProvider(authenticationProvider())
-                .addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class);
+                .oauth2ResourceServer((oauth2) -> oauth2.jwt(Customizer.withDefaults())
+                        .authenticationEntryPoint(customAuthenticationEntryPoint))
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         return http.build();
     }
 
     @Bean
-    public AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-        authenticationProvider.setUserDetailsService(userDetailsService());
-        authenticationProvider.setPasswordEncoder(passwordEncoder());
-        return authenticationProvider;
+    public JwtAuthenticationConverter jwtAuthenticationConverter() {
+        JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
+        grantedAuthoritiesConverter.setAuthorityPrefix("");
+        grantedAuthoritiesConverter.setAuthoritiesClaimName("info");
+
+        JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
+        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
+        return jwtAuthenticationConverter;
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-        return config.getAuthenticationManager();
+    public JwtDecoder jwtDecoder() {
+        NimbusJwtDecoder jwtDecoder = NimbusJwtDecoder.withSecretKey(
+                getSecretKey()).macAlgorithm(SecurityUtil.JWT_ALGORITHM).build();
+        return token -> {
+            try {
+                return jwtDecoder.decode(token);
+            } catch (Exception e) {
+                System.out.println(">>> JWT error: " + e.getMessage());
+                throw e;
+            }
+        };
+    }
+
+    @Bean
+    public JwtEncoder jwtEncoder() {
+        return new NimbusJwtEncoder(new ImmutableSecret<>(getSecretKey()));
+    }
+
+    private SecretKey getSecretKey() {
+        byte[] keyBytes = Base64.from(jwtKey).decode();
+        return new SecretKeySpec(keyBytes, 0, keyBytes.length,
+                SecurityUtil.JWT_ALGORITHM.getName());
     }
 }
